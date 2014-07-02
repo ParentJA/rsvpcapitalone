@@ -44,6 +44,7 @@ THIRD_PARTY_APPS = (
 
 LOCAL_APPS = (
     'rsvpcapitalone',
+    'reservations',
 )
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -88,6 +89,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+MAX_NUM_RESERVATIONS = 66
 
 
 # Static files (CSS, JavaScript, Images)

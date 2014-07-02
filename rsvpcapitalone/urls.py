@@ -1,12 +1,14 @@
-from django.conf.urls import patterns, include, url
-
+from django.conf.urls import include
+from django.conf.urls import patterns
+from django.conf.urls import url
 from django.contrib import admin
+from django.views.generic import TemplateView
+
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'rsvpcapitalone.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^reservations/', include('reservations.urls', namespace='reservations.urls')),
+    url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
 )
