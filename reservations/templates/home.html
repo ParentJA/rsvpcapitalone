@@ -8,26 +8,133 @@
     <meta name="viewport"
           content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #414141;
+            color: #FFF;
+            font-family: "TradeGothic", Helvetica, Arial, sans-serif;
+            font-size: 23px;
+            line-height: 23px;
+        }
+
+        form {
+            padding: 15px 52px;
+            background-color: #000;
+            box-shadow: 4px 4px 12px #000;
+            text-transform: uppercase;
+        }
+
+        form label {
+            font-size: 22px;
+            font-weight: normal;
+            line-height: 22px;
+        }
+
+        form button {
+            margin-top: 32px;
+        }
+
+        form.form-horizontal .control-label {
+            text-align: left;
+        }
+
+        form .form-heading {
+            margin-bottom: 22px;
+        }
+
+        form .form-heading .small-print {
+            letter-spacing: 10px;
+        }
+
+        form .form-control,
+        form .form-control option
+        {
+            font-weight: bold;
+        }
+
+        form .rsvp {
+            font-size: 35px;
+            line-height: 55px;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .date-lg {
+            font-size: 29px;
+            font-weight: bold;
+            line-height: 29px;
+        }
+
+        .date-md {
+            font-size: 22px;
+            font-weight: bold;
+            line-height: 22px;
+        }
+
+        .btn,
+        .btn:hover,
+        .btn:focus,
+        .btn:active
+        {
+            color: #FFF;
+            background-color: #414141;
+        }
+
+        .btn-capital {
+            padding: 20px 46px;
+            border-radius: 10px;
+            font-size: 22px;
+            line-height: 22px;
+            letter-spacing: 18px;
+            text-transform: uppercase;
+            text-shadow: 4px 4px 10px #000;
+        }
+
+        .small-print {
+            font-size: 15px;
+            line-height: 16px;
+        }
+
+        .terms-of-service {
+            margin-top: 42px;
+            padding: 0 25px;
+        }
+
+        #header {
+            padding: 44px 0;
+            color: #747474;
+            font-size: 35px;
+            line-height: 35px;
+        }
+
+        #header .byline {
+            font-size: 17px;
+            line-height: 17px;
+        }
+    </style>
 </head>
 
 <body ng-controller="rsvpCtrl">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12">
-                <p>
+            <div id="header" class="col-lg-12 col-md-12">
+                <p class="text-center">
                     <span>We're the bank next door</span><br>
-                    <span>but that doesn't mean we're ordinary</span>
+                    <span class="byline uppercase">but that doesn't mean we're ordinary</span>
                 </p>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-6 text-right" style="padding-top: 70px; padding-right: 28px;">
                 <p>
                     Join us & Chef Harold Deiterle<br>
                     for a private tasting and<br>
                     cooking demonstration.
                 </p>
-                <p>
+                <p class="date-lg" style="padding: 30px 0;">
                     July 24<sup>th</sup>, 7-9pm
                 </p>
                 <p>
@@ -36,56 +143,63 @@
                     750 Columbus Avenue<br>
                     New York, NY 10025
                 </p>
-                <p>
+                <p class="date-md" style="padding-top: 70px;">
                     Space is limited.<br>
                     Please RSVP by July 18<sup>th</sup>.
                 </p>
-                <p>
-                    <!--Capital One <img>-->
+                <p style="padding-top: 45px;">
+                    <img src="{{ STATIC_URL }}img/logo-capital.png" width="242" height="61">
                 </p>
             </div>
-            <div class="col-lg-6">
-                <p>
-                    Enter your<br>
-                    information to<br>
-                    RSVP
-                </p>
+            <div class="col-lg-6 col-md-6 text-left">
                 <form class="form-horizontal" action="" method="post">
+                    <p class="form-heading text-center">
+                        <span class="small-print uppercase">
+                            Enter your<br>
+                            information to<br>
+                        </span>
+                        <span class="rsvp">RSVP</span>
+                    </p>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="first-name">First name:</label>
-                        <div class="col-sm-8">
+                        <label class="col-md-5 control-label" for="first-name">First name:</label>
+                        <div class="col-md-7">
                             <input id="first-name" class="form-control" type="text">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="last-name">Last name:</label>
-                        <div class="col-sm-8">
+                        <label class="col-md-5 control-label" for="last-name">Last name:</label>
+                        <div class="col-md-7">
                             <input id="last-name" class="form-control" type="text">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="address">Address:</label>
-                        <div class="col-sm-8">
+                        <label class="col-md-4 control-label" for="address">Address:</label>
+                        <div class="col-md-8">
                             <input id="address" class="form-control" type="text">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="first-name">Email:</label>
-                        <div class="col-sm-8">
+                        <label class="col-md-3 control-label" for="first-name">Email:</label>
+                        <div class="col-md-9">
                             <input id="email" class="form-control" type="email">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="number-attending">Number attending:</label>
-                        <div class="col-sm-8">
-                            <input id="number-attending" class="form-control" type="text">
+                        <label class="col-md-7 control-label" for="number-attending">Number attending:</label>
+                        <div class="col-md-5">
+                            <select id="number-attending" class="form-control">
+                                <option>1</option>
+                                <option>2</option>
+                            </select>
                         </div>
                     </div>
-                    <button class="btn btn-primary" type="submit">Submit</button>
+                    <button class="btn btn-capital center-block" type="submit">Submit</button>
                 </form>
-                <p>
+                <p class="small-print terms-of-service">
                     No purchase necessary. Products and services are offered by Capital One, N.A. 1680 Capital One
-                    Drive, McLean, VA 22102. &reg; 2014 Capital One. All rights reserved. <!--FDIC <img>-->
+                    Drive, McLean, VA 22102. &reg; 2014 Capital One.<br>
+                    All rights reserved.
+                    <img src="{{ STATIC_URL }}img/logo-fdic.png" width="30" height="16">
                 </p>
             </div>
         </div>
