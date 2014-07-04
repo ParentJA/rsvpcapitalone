@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
@@ -62,6 +63,8 @@ def api_reservations(request, reservation_id=None):
                 selected_reservation.waitlist = True
                 selected_reservation.save()
 
+                # Send email: 'You have been added to the waitlist...'
+
                 return HttpResponse()
 
             except Reservation.DoesNotExist:
@@ -76,7 +79,7 @@ def api_reservations(request, reservation_id=None):
                 )
 
             current_reservations = Reservation.objects.all()
-            num_reservations = len(current_reservations)
+            num_reservations = sum([reservation.num_attending for reservation in current_reservations])
             existing_reservation = current_reservations.filter(email=email.lower())
             selected_reservation = None
 
@@ -84,7 +87,6 @@ def api_reservations(request, reservation_id=None):
             if existing_reservation.exists():
                 selected_reservation = existing_reservation[0]
             else:
-                num_reservations += 1
                 selected_reservation = Reservation.objects.create(
                     first_name=first_name,
                     last_name=last_name,
@@ -92,11 +94,14 @@ def api_reservations(request, reservation_id=None):
                     email=email.lower(),
                     num_attending=min(2, max(1, int(num_attending)))
                 )
+                num_reservations += selected_reservation.num_attending
 
             # Make sure the maximum number of reservations has not been exceeded...
             if num_reservations > MAX_NUM_RESERVATIONS:
                 selected_reservation.waitlisted = False
                 selected_reservation.save()
+
+            # Send email: 'You are confirmed for the event...'
 
             return HttpResponse(selected_reservation.to_json())
 

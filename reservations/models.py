@@ -12,6 +12,11 @@ class Reservation(models.Model):
     rsvp_date = models.DateTimeField(verbose_name='RSVP date', auto_now=True)
     waitlisted = models.NullBooleanField(default=None)
 
+    def save(self, *args, **kwargs):
+        # Send email to admins: 'Update on reservations...'
+        
+        super(Reservation, self).save(*args, **kwargs)
+
     def to_json(self):
         return json.dumps({
             'id': self.pk,

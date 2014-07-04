@@ -40,6 +40,7 @@ DEFAULT_APPS = (
 
 THIRD_PARTY_APPS = (
     'south',
+    'djrill',
 )
 
 LOCAL_APPS = (
@@ -91,6 +92,10 @@ USE_L10N = True
 USE_TZ = True
 
 MAX_NUM_RESERVATIONS = 66
+
+MANDRILL_API_KEY = 'k4crfyQbFHyJuIQe50eLbQ'
+
+EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
 
 
 # Static files (CSS, JavaScript, Images)
