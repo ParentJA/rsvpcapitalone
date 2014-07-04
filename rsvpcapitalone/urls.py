@@ -10,5 +10,5 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^reservations/', include('reservations.urls', namespace='reservations.urls')),
-    url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
+    url(r'^$', 'reservations.views.home', name='home'),
 )

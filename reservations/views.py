@@ -4,12 +4,19 @@ from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 import json
 
 from reservations.models import Reservation
 
 from rsvpcapitalone.settings import MAX_NUM_RESERVATIONS
+
+
+@ensure_csrf_cookie
+def home(request):
+    return render(request, 'home.html')
 
 
 def api_reservations(request, reservation_id=None):
