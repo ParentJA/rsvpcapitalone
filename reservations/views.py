@@ -59,11 +59,20 @@ def api_reservations(request, reservation_id=None):
                 return HttpResponseBadRequest('You must provide the email associated with the reservation ID.')
 
             try:
+                email = email.lower()
+
                 selected_reservation = Reservation.objects.get(id=reservation_id, email=email)
-                selected_reservation.waitlist = True
+                selected_reservation.waitlisted = True
                 selected_reservation.save()
 
                 # Send email: 'You have been added to the waitlist...'
+                send_mail(
+                    "Reservation",
+                    "You have been added to the waitlist...",
+                    "rsvp@rsvpcapitalone.com",
+                    [email],
+                    fail_silently=True
+                )
 
                 return HttpResponse()
 
@@ -78,22 +87,32 @@ def api_reservations(request, reservation_id=None):
                     email, num_attending.'
                 )
 
+            email = email.lower()
+
             current_reservations = Reservation.objects.all()
             num_reservations = sum([reservation.num_attending for reservation in current_reservations])
-            existing_reservation = current_reservations.filter(email=email.lower())
+            existing_reservation = current_reservations.filter(email=email)
             selected_reservation = None
 
             # Only create a new reservation if one does not already exist...
             if existing_reservation.exists():
                 selected_reservation = existing_reservation[0]
             else:
+                try:
+                    num_attending = int(num_attending)
+                    num_attending = max(1, num_attending)
+                    num_attending = min(2, num_attending)
+                except ValueError:
+                    num_attending = 1
+
                 selected_reservation = Reservation.objects.create(
                     first_name=first_name,
                     last_name=last_name,
                     address=address,
-                    email=email.lower(),
-                    num_attending=min(2, max(1, int(num_attending)))
+                    email=email,
+                    num_attending=num_attending
                 )
+
                 num_reservations += selected_reservation.num_attending
 
             # Make sure the maximum number of reservations has not been exceeded...
@@ -102,6 +121,13 @@ def api_reservations(request, reservation_id=None):
                 selected_reservation.save()
 
             # Send email: 'You are confirmed for the event...'
+            send_mail(
+                "Reservation",
+                "You are confirmed for the event...",
+                "rsvp@rsvpcapitalone.com",
+                [email],
+                fail_silently=True
+            )
 
             return HttpResponse(selected_reservation.to_json())
 

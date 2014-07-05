@@ -58,6 +58,14 @@
             line-height: 55px;
         }
 
+        .modal-content {
+            background-color: #000;
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
         .uppercase {
             text-transform: uppercase;
         }
@@ -74,6 +82,13 @@
             line-height: 22px;
         }
 
+        .bar {
+            width: 300px;
+            height: 4px;
+            margin: 40px auto;
+            background-color: #FFF;
+        }
+
         .btn,
         .btn:hover,
         .btn:focus,
@@ -88,8 +103,16 @@
             border-radius: 10px;
             font-size: 22px;
             line-height: 22px;
-            letter-spacing: 18px;
+            letter-spacing: 16px;
             text-transform: uppercase;
+            text-shadow: 4px 4px 10px #000;
+        }
+
+        .btn-capital-modal {
+            padding: 24px 10px;
+            border-radius: 10px;
+            font-size: 22px;
+            line-height: 22px;
             text-shadow: 4px 4px 10px #000;
         }
 
@@ -167,36 +190,36 @@
                     </div>
                     <div class="alert alert-danger" ng-show="data.isFormInvalid" ng-bind="data.errorMessage"></div>
                     <div class="form-group">
-                        <label class="col-md-5 control-label" for="first-name">First name:</label>
-                        <div class="col-md-7">
+                        <label class="col-md-4 control-label" for="first-name">First name:</label>
+                        <div class="col-md-8">
                             <input id="first-name" class="form-control" type="text"
                                    ng-model="data.firstName" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-5 control-label" for="last-name">Last name:</label>
-                        <div class="col-md-7">
+                        <label class="col-md-4 control-label" for="last-name">Last name:</label>
+                        <div class="col-md-8">
                             <input id="last-name" class="form-control" type="text"
                                    ng-model="data.lastName" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-4 control-label" for="address">Address:</label>
-                        <div class="col-md-8">
+                        <label class="col-md-3 control-label" for="address">Address:</label>
+                        <div class="col-md-9">
                             <input id="address" class="form-control" type="text"
                                    ng-model="data.address" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-3 control-label" for="first-name">Email:</label>
-                        <div class="col-md-9">
+                        <label class="col-md-2 control-label" for="first-name">Email:</label>
+                        <div class="col-md-10">
                             <input id="email" class="form-control" type="email"
                                    ng-model="data.email" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-7 control-label" for="number-attending">Number attending:</label>
-                        <div class="col-md-5">
+                        <label class="col-md-6 control-label" for="number-attending">Number attending:</label>
+                        <div class="col-md-6">
                             <select id="number-attending" class="form-control"
                                     ng-model="data.numAttending" required>
                                 <option>1</option>

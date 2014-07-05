@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.db import models
 
 import json
@@ -14,7 +16,16 @@ class Reservation(models.Model):
 
     def save(self, *args, **kwargs):
         # Send email to admins: 'Update on reservations...'
-        
+        admins = [admin.email for admin in User.objects.filter(is_superuser=True)]
+
+        send_mail(
+            'Reservation',
+            '%s %s has been added to the waitlist...' % (self.first_name, self.last_name,),
+            'rsvp@rsvpcapitalone.com',
+            admins,
+            fail_silently=True
+        )
+
         super(Reservation, self).save(*args, **kwargs)
 
     def to_json(self):

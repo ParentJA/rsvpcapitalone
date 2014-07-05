@@ -27,16 +27,14 @@
                     data: reservationData,
                     xsrfHeaderName: "X-CSRFToken",
                     xsrfCookieName: "csrftoken"
-                }).success($scope.onSuccess).error($scope.onError);
-
-                //$http.post(apiReservationsUrl, reservationData).success(onSuccess).error(onError);
+                }).success($scope.onReservationSuccess).error($scope.onReservationError);
             }
             else {
                 $scope.data.isFormIncomplete = true;
             }
         };
 
-        $scope.onSuccess = function(data) {
+        $scope.onReservationSuccess = function(data) {
             $scope.data.reservationId = data.id;
             $scope.data.reservationEmail = data.email;
 
@@ -51,7 +49,7 @@
             }
         };
 
-        $scope.onError = function(data) {
+        $scope.onReservationError = function(data) {
 
         };
     };
@@ -68,6 +66,22 @@
 
     var waitlistModalCtrl = function($scope, $http, apiReservationsUrl) {
         $scope.onWaitlistButtonClick = function(event) {
+            $http({
+                method: "POST",
+                url: apiReservationsUrl + $scope.data.reservationId + "/",
+                data: {
+                    email: $scope.data.reservationEmail
+                },
+                xsrfHeaderName: "X-CSRFToken",
+                xsrfCookieName: "csrftoken"
+            }).success($scope.onWaitlistSuccess).error($scope.onWaitlistError);
+        };
+
+        $scope.onWaitlistSuccess = function(data) {
+
+        };
+
+        $scope.onWaitlistError = function(data) {
 
         };
     };
