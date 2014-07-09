@@ -67,9 +67,14 @@ def api_reservations(request, reservation_id=None):
 
                 # Send email: 'You have been added to the waitlist...'
                 send_mail(
-                    "Reservation",
-                    "You have been added to the waitlist...",
-                    "rsvp@rsvpcapitalone.com",
+                    'Reservation',
+                    'Thanks for your response to the Celebrity Chef Event.\n\n'
+                    'Unfortunately we have reached capacity for this event, but if requested, '
+                    'you have been added to the waitlist.\n\n'
+                    'We will contact you if space opens.\n\n'
+                    'Thank you again.\n\n'
+                    'Capital One Bank',
+                    'rsvp@rsvpcapitalone.com',
                     [email],
                     fail_silently=True
                 )
@@ -122,9 +127,13 @@ def api_reservations(request, reservation_id=None):
 
             # Send email: 'You are confirmed for the event...'
             send_mail(
-                "Reservation",
-                "You are confirmed for the event...",
-                "rsvp@rsvpcapitalone.com",
+                'Reservation',
+                'Your reservation for the Celebrity Chef Event is confirmed!\n\n'
+                'We look forward to seeing you at the branch at 7pm. 750 Columbus Avenue\n\n'
+                'New York, NY 10025\n\n'
+                'Thank you,\n\n'
+                'Capital One Bank',
+                'rsvp@rsvpcapitalone.com',
                 [email],
                 fail_silently=True
             )
