@@ -18,9 +18,14 @@ class Reservation(models.Model):
         # Send email to admins: 'Update on reservations...'
         admins = [admin.email for admin in User.objects.filter(is_superuser=True)]
 
+        body = '%s %s is confirmed for the event...' % (self.first_name, self.last_name)
+
+        if self.waitlisted:
+            body = '%s %s has been added to the waitlist...' % (self.first_name, self.last_name,)
+
         send_mail(
             'Reservation',
-            '%s %s has been added to the waitlist...' % (self.first_name, self.last_name,),
+            body,
             'rsvp@rsvpcapitalone.com',
             admins,
             fail_silently=True
