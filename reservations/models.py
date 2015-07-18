@@ -1,8 +1,15 @@
+__author__ = 'jason.a.parent@gmail.com (Jason Parent)'
+
+# Standard library imports...
+import json
+
+# Django imports...
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db import models
 
-import json
+DEBUG = getattr(settings, 'DEBUG', False)
 
 
 class Reservation(models.Model):
@@ -23,13 +30,14 @@ class Reservation(models.Model):
         if self.waitlisted:
             body = '%s %s has been added to the waitlist...' % (self.first_name, self.last_name,)
 
-        send_mail(
-            'Reservation',
-            body,
-            'rsvp@rsvpcapitalone.com',
-            admins,
-            fail_silently=True
-        )
+        if not DEBUG:
+            send_mail(
+                'Reservation',
+                body,
+                'rsvp@rsvpcapitalone.com',
+                admins,
+                fail_silently=True
+            )
 
         super(Reservation, self).save(*args, **kwargs)
 

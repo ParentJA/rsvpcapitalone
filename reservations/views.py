@@ -1,3 +1,10 @@
+__author__ = 'jason.a.parent@gmail.com (Jason Parent)'
+
+# Standard library imports...
+import json
+
+# Django imports...
+from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
@@ -8,11 +15,10 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-import json
-
+# Local imports...
 from reservations.models import Reservation
 
-from rsvpcapitalone.settings import MAX_NUM_RESERVATIONS
+MAX_NUM_RESERVATIONS = getattr(settings, 'MAX_NUM_RESERVATIONS', 66)
 
 
 @ensure_csrf_cookie
@@ -68,14 +74,14 @@ def api_reservations(request, reservation_id=None):
                 # Send email: 'You have been added to the waitlist...'
                 send_mail(
                     'Reservation',
-                    'Thanks for your response to the Celebrity Chef Event.\n\n'
-                    'Unfortunately we have reached capacity for this event, but if requested, '
-                    'you have been added to the waitlist.\n\n'
-                    'We will contact you if space opens.\n\n'
-                    'Thank you again.\n\n'
-                    'Capital One Bank',
-                    'rsvp@rsvpcapitalone.com',
-                    [email],
+                    message='Thanks for your response to the Celebrity Chef Event.\n\n'
+                            'Unfortunately we have reached capacity for this event, but if requested, '
+                            'you have been added to the waitlist.\n\n'
+                            'We will contact you if space opens.\n\n'
+                            'Thank you again.\n\n'
+                            'Capital One Bank',
+                    from_email='rsvp@rsvpcapitalone.com',
+                    recipient_list=[email],
                     fail_silently=True
                 )
 
@@ -87,10 +93,10 @@ def api_reservations(request, reservation_id=None):
         # Add a new reservation...
         else:
             if not all([first_name, last_name, address, email, num_attending]):
-                return HttpResponseBadRequest(
-                    'You must provide all of the required parameters: first_name, last_name, address, \
-                    email, num_attending.'
-                )
+                return HttpResponseBadRequest(''.join([
+                    'You must provide all of the required parameters: first_name, last_name, address,',
+                    'email, num_attending.'
+                ]))
 
             email = email.lower()
 
@@ -128,13 +134,13 @@ def api_reservations(request, reservation_id=None):
             # Send email: 'You are confirmed for the event...'
             send_mail(
                 'Reservation',
-                'Your reservation for the Celebrity Chef Event is confirmed!\n\n'
-                'We look forward to seeing you at the branch at 7pm. 750 Columbus Avenue\n\n'
-                'New York, NY 10025\n\n'
-                'Thank you,\n\n'
-                'Capital One Bank',
-                'rsvp@rsvpcapitalone.com',
-                [email],
+                message='Your reservation for the Celebrity Chef Event is confirmed!\n\n'
+                        'We look forward to seeing you at the branch at 7pm. 750 Columbus Avenue\n\n'
+                        'New York, NY 10025\n\n'
+                        'Thank you,\n\n'
+                        'Capital One Bank',
+                from_email='rsvp@rsvpcapitalone.com',
+                recipient_list=[email],
                 fail_silently=True
             )
 

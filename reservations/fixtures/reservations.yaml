@@ -1,0 +1,11 @@
+- model: reservations.Reservation
+  pk: 1
+  fields:
+    first_name: Jason
+    last_name: Parent
+    address: 123 Main Street
+    email: jason.parent@example.com
+    num_attending: 1
+    rsvp_date: 2015-07-17 00:00:00
+    waitlisted: None
+
