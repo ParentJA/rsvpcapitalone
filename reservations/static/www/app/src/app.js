@@ -1,40 +1,35 @@
-(function() {
+(function () {
 
-    var rsvpCtrl = function($scope, $http, $log, apiReservationsUrl) {
+    var RsvpController = function RsvpController($scope, $log, Restangular) {
         $scope.data = {};
 
-        $scope.submit = function() {
+        $scope.submit = function submit() {
             var reservationData = {
-                "first_name": $scope.data.firstName,
-                "last_name": $scope.data.lastName,
-                "address": $scope.data.address,
-                "email": $scope.data.email,
-                "num_attending": $scope.data.numAttending
+                first_name: $scope.data.firstName,
+                last_name: $scope.data.lastName,
+                address: $scope.data.address,
+                email: $scope.data.email,
+                num_attending: $scope.data.numAttending
             };
 
             var isComplete = true;
 
-            angular.forEach(reservationData, function(value, key) {
-                isComplete = isComplete && angular.isDefined(value);
+            _.forEach(reservationData, function (value) {
+                isComplete = isComplete && !_.isUndefined(value);
             });
 
             if (isComplete) {
                 $scope.data.isFormIncomplete = false;
 
-                $http({
-                    method: "POST",
-                    url: apiReservationsUrl,
-                    data: reservationData,
-                    xsrfHeaderName: "X-CSRFToken",
-                    xsrfCookieName: "csrftoken"
-                }).success($scope.onReservationSuccess).error($scope.onReservationError);
+                Restangular.all("reservations").post(reservationData)
+                    .then($scope.onReservationSuccess, $scope.onReservationError);
             }
             else {
                 $scope.data.isFormIncomplete = true;
             }
         };
 
-        $scope.onReservationSuccess = function(data) {
+        $scope.onReservationSuccess = function onReservationSuccess(data) {
             $scope.data.reservationId = data.id;
             $scope.data.reservationEmail = data.email;
 
@@ -49,14 +44,12 @@
             }
         };
 
-        $scope.onReservationError = function(data) {
-
-        };
+        $scope.onReservationError = function onReservationError(data) {};
     };
 
-    rsvpCtrl.$inject = ["$scope", "$http", "$log", "apiReservationsUrl"];
+    RsvpController.$inject = ["$scope", "$log", "Restangular"];
 
-    var thankYouModal = function() {
+    var thankYouModal = function thankYouModal() {
         return {
             restrict: "E",
             replace: true,
@@ -64,31 +57,21 @@
         };
     };
 
-    var waitlistModalCtrl = function($scope, $http, apiReservationsUrl) {
-        $scope.onWaitlistButtonClick = function(event) {
-            $http({
-                method: "POST",
-                url: apiReservationsUrl + $scope.data.reservationId + "/",
-                data: {
-                    email: $scope.data.reservationEmail
-                },
-                xsrfHeaderName: "X-CSRFToken",
-                xsrfCookieName: "csrftoken"
-            }).success($scope.onWaitlistSuccess).error($scope.onWaitlistError);
+    var waitlistModalCtrl = function ($scope, Restangular) {
+        $scope.onWaitlistButtonClick = function onWaitlistButtonClick() {
+            Restangular.one("reservations", $scope.data.reservationId).post({
+                email: $scope.data.reservationEmail
+            }).then($scope.onWaitlistSuccess, $scope.onWaitlistError);
         };
 
-        $scope.onWaitlistSuccess = function(data) {
+        $scope.onWaitlistSuccess = function onWaitlistSuccess(data) {};
 
-        };
-
-        $scope.onWaitlistError = function(data) {
-
-        };
+        $scope.onWaitlistError = function onWaitlistError(data) {};
     };
 
-    waitlistModalCtrl.$inject = ["$scope", "$http", "apiReservationsUrl"];
+    waitlistModalCtrl.$inject = ["$scope", "Restangular"];
 
-    var waitlistModal = function() {
+    var waitlistModal = function waitlistModal() {
         return {
             restrict: "E",
             replace: true,
@@ -97,9 +80,16 @@
         };
     };
 
-    angular.module("rsvpApp", [])
+    angular.module("rsvpApp", ["restangular"])
+        .config(function(RestangularProvider) {
+            RestangularProvider.setBaseUrl("/reservations/api/");
+            RestangularProvider.setDefaultHttpFields({
+                xsrfHeaderName: "X-CSRFToken",
+                xsrfCookieName: "csrftoken"
+            });
+        })
         .constant("apiReservationsUrl", "/reservations/api/reservations/")
-        .controller("rsvpCtrl", rsvpCtrl)
+        .controller("RsvpController", RsvpController)
         .directive("thankYouModal", thankYouModal)
         .directive("waitlistModal", waitlistModal);
 
