@@ -53,7 +53,7 @@
         return {
             restrict: "E",
             replace: true,
-            templateUrl: "/reservations/views/thank-you-modal.html"
+            templateUrl: "/views/thank-you-modal.html"
         };
     };
 
@@ -76,19 +76,18 @@
             restrict: "E",
             replace: true,
             controller: waitlistModalCtrl,
-            templateUrl: "/reservations/views/waitlist-modal.html"
+            templateUrl: "/views/waitlist-modal.html"
         };
     };
 
     angular.module("rsvpApp", ["restangular"])
         .config(function(RestangularProvider) {
-            RestangularProvider.setBaseUrl("/reservations/api/");
+            RestangularProvider.setBaseUrl("/api/v1/");
             RestangularProvider.setDefaultHttpFields({
                 xsrfHeaderName: "X-CSRFToken",
                 xsrfCookieName: "csrftoken"
             });
         })
-        .constant("apiReservationsUrl", "/reservations/api/reservations/")
         .controller("RsvpController", RsvpController)
         .directive("thankYouModal", thankYouModal)
         .directive("waitlistModal", waitlistModal);

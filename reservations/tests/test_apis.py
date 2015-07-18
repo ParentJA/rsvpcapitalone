@@ -6,57 +6,64 @@ from unittest import skip
 
 # Third-party imports...
 from mock import Mock, patch
+from rest_framework.test import APIClient, APIRequestFactory
 
 # Django imports...
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.test import Client, TestCase
 
 # Local imports...
-from ..apis import api_reservations, CONFIRMATION_MESSAGE, WAITLIST_MESSAGE
+from ..apis import api_reservations, CONFIRMATION_MESSAGE, ReservationViewSet, WAITLIST_MESSAGE
 from ..models import Reservation
+from ..serializers import ReservationSerializer
+
+User = get_user_model()
 
 
 class ReservationsViewTest(TestCase):
     fixtures = ['reservations']
 
     def setUp(self):
-        self.client = Client()
+        # Create a superuser...
+        self.superuser = User.objects.create_superuser(
+            username='superuser',
+            password='password',
+            email='superuser@example.com'
+        )
+
+        self.factory = APIRequestFactory()
+        self.client = APIClient()
         self.reservation = Reservation.objects.first()
 
     def test_non_superuser_cannot_retrieve_reservations(self):
-        request = HttpRequest()
-        request.user = Mock(is_superuser=False)
-        request.method = 'GET'
-        response = api_reservations(request)
+        response = self.client.get('/api/v1/reservations/')
 
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.content, 'You must have superuser privileges to access this information.')
+        self.assertRedirects(response, '/admin/?next=/api/v1/reservations/')
 
     def test_superuser_can_retrieve_existing_reservation(self):
-        request = HttpRequest()
-        request.user = Mock(is_superuser=True)
-        request.method = 'GET'
-        response = api_reservations(request, reservation_id=self.reservation.id)
+        self.client.force_authenticate(user=self.superuser)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.reservation.to_json())
+        response = self.client.get('/api/v1/reservations/%d/' % (self.reservation.id,))
+
+        self.assertJSONEqual(response.content, ReservationSerializer(self.reservation).data)
 
     def test_superuser_cannot_retrieve_non_existent_reservation(self):
-        request = HttpRequest()
-        request.user = Mock(is_superuser=True)
-        request.method = 'GET'
+        self.client.force_authenticate(user=self.superuser)
 
-        with self.assertRaisesMessage(Exception, 'No Reservation matches the given query.'):
-            api_reservations(request, reservation_id=2)
+        response = self.client.get('/api/v1/reservations/0/')
+
+        self.assertJSONEqual(response.content, {'detail': 'Not found.'})
 
     def test_superuser_can_retrieve_all_reservations(self):
-        request = HttpRequest()
-        request.user = Mock(is_superuser=True)
-        request.method = 'GET'
-        response = api_reservations(request)
+        self.client.force_authenticate(user=self.superuser)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, [self.reservation.to_json()])
+        response = self.client.get('/api/v1/reservations/')
+
+        self.assertJSONEqual(
+            response.content,
+            ReservationSerializer(Reservation.objects.all(), many=True).data
+        )
 
     @skip('Needs fix...')
     def test_cannot_post_improperly_formatted_data(self):

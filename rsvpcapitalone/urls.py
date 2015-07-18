@@ -6,6 +6,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 # Django imports...
 from django.conf.urls import include, patterns, url
 from django.contrib import admin
+from django.views.generic import TemplateView
 
 admin.autodiscover()
 
@@ -18,3 +19,8 @@ urlpatterns = patterns('',
 urlpatterns += format_suffix_patterns(patterns('',
     url(r'^api/v1/', include('reservations.urls')),
 ))
+
+urlpatterns += patterns('',
+    url(r'^views/thank-you-modal.html$', TemplateView.as_view(template_name='views/thank-you-modal.html')),
+    url(r'^views/waitlist-modal.html$', TemplateView.as_view(template_name='views/waitlist-modal.html')),
+)
