@@ -42,6 +42,7 @@ THIRD_PARTY_APPS = (
     'south',
     'djrill',
     'django_hstore',
+    'rest_framework',
 )
 
 LOCAL_APPS = (
