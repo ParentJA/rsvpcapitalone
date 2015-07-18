@@ -13,7 +13,7 @@ from django.test import Client, TestCase
 
 # Local imports...
 from ..models import Reservation
-from ..views import api_reservations
+from ..views import api_reservations, CONFIRMATION_MESSAGE, WAITLIST_MESSAGE
 
 
 class HomeViewTest(TestCase):
@@ -113,12 +113,7 @@ class ReservationsViewTest(TestCase):
 
         mock_send_mail.assert_called_once_with(
             'Reservation',
-            message='Thanks for your response to the Celebrity Chef Event.\n\n'
-                    'Unfortunately we have reached capacity for this event, but if requested, '
-                    'you have been added to the waitlist.\n\n'
-                    'We will contact you if space opens.\n\n'
-                    'Thank you again.\n\n'
-                    'Capital One Bank',
+            message=WAITLIST_MESSAGE,
             from_email='rsvp@rsvpcapitalone.com',
             recipient_list=[self.reservation.email],
             fail_silently=True
@@ -187,11 +182,7 @@ class ReservationsViewTest(TestCase):
 
         mock_send_mail.assert_called_once_with(
             'Reservation',
-            message='Your reservation for the Celebrity Chef Event is confirmed!\n\n'
-                    'We look forward to seeing you at the branch at 7pm. 750 Columbus Avenue\n\n'
-                    'New York, NY 10025\n\n'
-                    'Thank you,\n\n'
-                    'Capital One Bank',
+            message=CONFIRMATION_MESSAGE,
             from_email='rsvp@rsvpcapitalone.com',
             recipient_list=['john.lennon@example.com'],
             fail_silently=True

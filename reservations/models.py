@@ -3,13 +3,19 @@ __author__ = 'jason.a.parent@gmail.com (Jason Parent)'
 # Standard library imports...
 import json
 
+# Third-party library imports...
+from django_hstore import hstore
+
 # Django imports...
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db import models
 
-DEBUG = getattr(settings, 'DEBUG', False)
+
+class Config(models.Model):
+    data = hstore.DictionaryField(blank=True, null=True)
+
+    objects = hstore.HStoreManager()
 
 
 class Reservation(models.Model):
@@ -30,14 +36,13 @@ class Reservation(models.Model):
         if self.waitlisted:
             body = '%s %s has been added to the waitlist...' % (self.first_name, self.last_name,)
 
-        if not DEBUG:
-            send_mail(
-                'Reservation',
-                body,
-                'rsvp@rsvpcapitalone.com',
-                admins,
-                fail_silently=True
-            )
+        send_mail(
+            'Reservation',
+            body,
+            'rsvp@rsvpcapitalone.com',
+            admins,
+            fail_silently=True
+        )
 
         super(Reservation, self).save(*args, **kwargs)
 

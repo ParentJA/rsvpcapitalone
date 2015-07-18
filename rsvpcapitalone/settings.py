@@ -41,6 +41,7 @@ DEFAULT_APPS = (
 THIRD_PARTY_APPS = (
     'south',
     'djrill',
+    'django_hstore',
 )
 
 LOCAL_APPS = (
@@ -77,6 +78,8 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+SOUTH_DATABASE_ADAPTERS = {'default': 'south.db.postgresql_psycopg2'}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

@@ -4,21 +4,20 @@ __author__ = 'jason.a.parent@gmail.com (Jason Parent)'
 import json
 
 # Django imports...
-from django.conf import settings
 from django.core.mail import send_mail
-from django.http import HttpResponse
-from django.http import HttpResponseBadRequest
-from django.http import HttpResponseForbidden
-from django.http import HttpResponseNotAllowed
-from django.http import HttpResponseNotFound
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render
+from django.http import (
+    HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseNotFound
+)
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 # Local imports...
-from reservations.models import Reservation
+from .models import Reservation
+from .utils import get_param
 
-MAX_NUM_RESERVATIONS = getattr(settings, 'MAX_NUM_RESERVATIONS', 66)
+MAX_NUM_RESERVATIONS = int(get_param('MAX_NUM_RESERVATIONS', 66))
+WAITLIST_MESSAGE = get_param('WAITLIST_MESSAGE', '[WAITLIST_MESSAGE]')
+CONFIRMATION_MESSAGE = get_param('CONFIRMATION_MESSAGE', '[CONFIRMATION_MESSAGE]')
 
 
 @ensure_csrf_cookie
@@ -74,12 +73,7 @@ def api_reservations(request, reservation_id=None):
                 # Send email: 'You have been added to the waitlist...'
                 send_mail(
                     'Reservation',
-                    message='Thanks for your response to the Celebrity Chef Event.\n\n'
-                            'Unfortunately we have reached capacity for this event, but if requested, '
-                            'you have been added to the waitlist.\n\n'
-                            'We will contact you if space opens.\n\n'
-                            'Thank you again.\n\n'
-                            'Capital One Bank',
+                    message=WAITLIST_MESSAGE,
                     from_email='rsvp@rsvpcapitalone.com',
                     recipient_list=[email],
                     fail_silently=True
@@ -134,11 +128,7 @@ def api_reservations(request, reservation_id=None):
             # Send email: 'You are confirmed for the event...'
             send_mail(
                 'Reservation',
-                message='Your reservation for the Celebrity Chef Event is confirmed!\n\n'
-                        'We look forward to seeing you at the branch at 7pm. 750 Columbus Avenue\n\n'
-                        'New York, NY 10025\n\n'
-                        'Thank you,\n\n'
-                        'Capital One Bank',
+                message=CONFIRMATION_MESSAGE,
                 from_email='rsvp@rsvpcapitalone.com',
                 recipient_list=[email],
                 fail_silently=True

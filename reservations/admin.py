@@ -1,10 +1,19 @@
+__author__ = 'jason.a.parent@gmail.com (Jason Parent)'
+
+# Django imports...
 from django.contrib import admin
 
-from reservations.models import Reservation
+# Local imports...
+from reservations.models import Config, Reservation
+
+
+class ConfigAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Config, ConfigAdmin)
 
 
 class ReservationAdmin(admin.ModelAdmin):
     list_display = ('rsvp_date', 'first_name', 'last_name', 'address', 'email', 'num_attending', 'waitlisted',)
-
 
 admin.site.register(Reservation, ReservationAdmin)
