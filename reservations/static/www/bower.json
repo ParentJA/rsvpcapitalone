@@ -1,0 +1,27 @@
+{
+  "name": "www",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ParentJA/rsvpcapitalone",
+  "authors": [
+    "Jason Parent <ParentJ@advisory.com>"
+  ],
+  "description": "An RSVP system.",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "angular": "~1.4.3",
+    "lodash": "~3.10.0",
+    "jquery": "~2.1.4",
+    "restangular": "~1.5.1"
+  }
+}
