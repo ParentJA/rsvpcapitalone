@@ -13,7 +13,25 @@ from django.db import models
 
 
 class Config(models.Model):
-    data = hstore.DictionaryField(blank=True, null=True)
+    data = hstore.DictionaryField(blank=True, null=True, schema=[{
+        'name': 'MAX_NUM_RESERVATIONS',
+        'class': 'IntegerField',
+        'kwargs': {
+            'default': 0
+        }
+    }, {
+        'name': 'WAITLIST_MESSAGE',
+        'class': 'TextField',
+        'kwargs': {
+            'blank': True
+        }
+    }, {
+        'name': 'CONFIRMATION_MESSAGE',
+        'class': 'TextField',
+        'kwargs': {
+            'blank': True
+        }
+    }])
 
     objects = hstore.HStoreManager()
 

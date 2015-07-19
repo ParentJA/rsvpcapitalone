@@ -1,8 +1,5 @@
 __author__ = 'parentj@eab.com (Jason Parent)'
 
-# Standard library imports...
-import json
-
 # Third-party library imports...
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -11,9 +8,6 @@ from rest_framework.viewsets import ModelViewSet
 # Django imports...
 from django.contrib.auth.decorators import user_passes_test
 from django.core.mail import send_mail
-from django.http import (
-    HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
-)
 from django.utils.decorators import method_decorator
 
 # Local imports...
@@ -23,7 +17,7 @@ from .utils import get_param
 
 user_is_superuser = user_passes_test(lambda u: u.is_superuser, login_url='/admin/')
 
-MAX_NUM_RESERVATIONS = int(get_param('MAX_NUM_RESERVATIONS', 66))
+MAX_NUM_RESERVATIONS = get_param('MAX_NUM_RESERVATIONS', 66)
 WAITLIST_MESSAGE = get_param('WAITLIST_MESSAGE', '[WAITLIST_MESSAGE]')
 CONFIRMATION_MESSAGE = get_param('CONFIRMATION_MESSAGE', '[CONFIRMATION_MESSAGE]')
 
@@ -59,7 +53,7 @@ class ReservationViewSet(ModelViewSet):
             num_reservations += reservation.num_attending
 
         # Make sure the maximum number of reservations has not been exceeded...
-        if num_reservations > MAX_NUM_RESERVATIONS:
+        if num_reservations > int(MAX_NUM_RESERVATIONS):
             reservation.waitlisted = False
             reservation.save()
 
