@@ -2,19 +2,17 @@ __author__ = 'parentj@eab.com (Jason Parent)'
 
 # Standard library imports...
 import json
-from unittest import skip
 
 # Third-party imports...
-from mock import Mock, patch
-from rest_framework.test import APIClient, APIRequestFactory
+from mock import patch
+from rest_framework.test import APIClient
 
 # Django imports...
 from django.contrib.auth import get_user_model
-from django.http import HttpRequest
-from django.test import Client, TestCase
+from django.test import TestCase
 
 # Local imports...
-from ..apis import api_reservations, CONFIRMATION_MESSAGE, ReservationViewSet, WAITLIST_MESSAGE
+from ..apis import CONFIRMATION_MESSAGE, WAITLIST_MESSAGE
 from ..models import Reservation
 from ..serializers import ReservationSerializer
 
@@ -25,6 +23,8 @@ class ReservationsViewTest(TestCase):
     fixtures = ['reservations']
 
     def setUp(self):
+        self.client = APIClient()
+
         # Create a superuser...
         self.superuser = User.objects.create_superuser(
             username='superuser',
@@ -32,14 +32,18 @@ class ReservationsViewTest(TestCase):
             email='superuser@example.com'
         )
 
-        self.factory = APIRequestFactory()
-        self.client = APIClient()
+        # Get the reservation installed by the fixture...
         self.reservation = Reservation.objects.first()
 
-    def test_non_superuser_cannot_retrieve_reservations(self):
+    def test_user_cannot_retrieve_reservations(self):
         response = self.client.get('/api/v1/reservations/')
 
         self.assertRedirects(response, '/admin/?next=/api/v1/reservations/')
+
+    def test_user_cannot_list_reservations(self):
+        response = self.client.get('/api/v1/reservations/%d/' % (self.reservation.id,))
+
+        self.assertRedirects(response, '/admin/?next=/api/v1/reservations/%d/' % (self.reservation.id,))
 
     def test_superuser_can_retrieve_existing_reservation(self):
         self.client.force_authenticate(user=self.superuser)
@@ -65,27 +69,7 @@ class ReservationsViewTest(TestCase):
             ReservationSerializer(Reservation.objects.all(), many=True).data
         )
 
-    @skip('Needs fix...')
-    def test_cannot_post_improperly_formatted_data(self):
-        response = self.client.post('/api/v1/reservations/', content_type='application/json')
-
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, '')
-
-    def test_cannot_update_reservation_without_email(self):
-        url = '/api/v1/reservations/%d/' % (self.reservation.id,)
-        response = self.client.post(url, content_type='application/json', data=json.dumps({
-            'first_name': self.reservation.first_name,
-            'last_name': self.reservation.last_name,
-            'address': self.reservation.address,
-            # 'email': self.reservation.email,
-            'num_attending': self.reservation.num_attending
-        }))
-
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, 'You must provide the email associated with the reservation ID.')
-
-    def test_cannot_update_non_existent_reservation(self):
+    def test_user_cannot_update_non_existent_reservation(self):
         url = '/api/v1/reservations/0/'
         response = self.client.post(url, content_type='application/json', data=json.dumps({
             'first_name': self.reservation.first_name,
@@ -95,8 +79,9 @@ class ReservationsViewTest(TestCase):
             'num_attending': self.reservation.num_attending
         }))
 
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.content, 'A reservation with the given ID and email was not found.')
+        self.assertJSONEqual(response.content, json.dumps({
+            'detail': 'Not found.'
+        }))
 
     @patch('reservations.apis.send_mail')
     def test_updated_reservation_sends_mail(self, mock_send_mail):
@@ -117,22 +102,9 @@ class ReservationsViewTest(TestCase):
             fail_silently=True
         )
 
-    def test_cannot_create_reservation_without_parameters(self):
-        url = '/api/v1/reservations'
-        response = self.client.post(url, content_type='application/json', data=json.dumps({}))
-
-        self.assertEqual(response.status_code, 400)
-
-        expected_message = ''.join([
-            'You must provide all of the required parameters: first_name, last_name, address,',
-            'email, num_attending.'
-        ])
-
-        self.assertEqual(response.content, expected_message)
-
     @patch('reservations.apis.send_mail')
     def test_can_create_new_reservation(self, mock_send_mail):
-        url = '/api/v1/reservations'
+        url = '/api/v1/reservations/'
         response = self.client.post(url, content_type='application/json', data=json.dumps({
             'first_name': 'John',
             'last_name': 'Lennon',
@@ -154,7 +126,7 @@ class ReservationsViewTest(TestCase):
     ):
         mock_max_num_reservations.return_value = 1
 
-        url = '/api/v1/reservations'
+        url = '/api/v1/reservations/'
         response = self.client.post(url, content_type='application/json', data=json.dumps({
             'first_name': 'John',
             'last_name': 'Lennon',
@@ -169,7 +141,7 @@ class ReservationsViewTest(TestCase):
 
     @patch('reservations.apis.send_mail')
     def test_new_reservation_sends_email(self, mock_send_mail):
-        url = '/api/v1/reservations'
+        url = '/api/v1/reservations/'
         self.client.post(url, content_type='application/json', data=json.dumps({
             'first_name': 'John',
             'last_name': 'Lennon',

@@ -9,7 +9,12 @@ from .apis import ReservationViewSet
 
 
 urlpatterns = patterns('reservations.apis',
-    url(r'^reservations$', 'api_reservations'),
-    url(r'^reservations/$', ReservationViewSet.as_view({'get': 'list'})),
-    url(r'^reservations/(?P<pk>\d+)/$', ReservationViewSet.as_view({'get': 'retrieve'})),
+    url(r'^reservations/$', ReservationViewSet.as_view({
+        'get': 'list',
+        'post': 'create'
+    })),
+    url(r'^reservations/(?P<pk>\d+)/$', ReservationViewSet.as_view({
+        'get': 'retrieve',
+        'post': 'update'
+    })),
 )

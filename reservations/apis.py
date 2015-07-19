@@ -4,6 +4,8 @@ __author__ = 'parentj@eab.com (Jason Parent)'
 import json
 
 # Third-party library imports...
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 # Django imports...
@@ -34,100 +36,61 @@ class ReservationViewSet(ModelViewSet):
     def list(self, request):
         return super(ReservationViewSet, self).list(request)
 
-    @method_decorator(user_is_superuser)
-    def retrieve(self, request, pk=None):
-        return super(ReservationViewSet, self).retrieve(request, pk)
-
-
-def api_reservations(request, reservation_id=None):
-    data = request.POST
-
-    if len(data) == 0:
-        try:
-            data = json.loads(request.body)
-        except ValueError:
-            return HttpResponseBadRequest('You must call the API with properly formatted parameters.')
-
-    first_name = data.get('first_name')
-    last_name = data.get('last_name')
-    address = data.get('address')
-    email = data.get('email')
-    num_attending = data.get('num_attending')
-
-    # Updating specific reservation with waitlist choice...
-    if reservation_id:
-        if not email:
-            return HttpResponseBadRequest('You must provide the email associated with the reservation ID.')
-
-        try:
-            email = email.lower()
-
-            selected_reservation = Reservation.objects.get(id=reservation_id, email=email)
-            selected_reservation.waitlisted = True
-            selected_reservation.save()
-
-            # Send email: 'You have been added to the waitlist...'
-            send_mail(
-                'Reservation',
-                message=WAITLIST_MESSAGE,
-                from_email='rsvp@rsvpcapitalone.com',
-                recipient_list=[email],
-                fail_silently=True
-            )
-
-            return HttpResponse()
-
-        except Reservation.DoesNotExist:
-            return HttpResponseNotFound('A reservation with the given ID and email was not found.')
-
-    # Add a new reservation...
-    else:
-        if not all([first_name, last_name, address, email, num_attending]):
-            return HttpResponseBadRequest(''.join([
-                'You must provide all of the required parameters: first_name, last_name, address,',
-                'email, num_attending.'
-            ]))
-
-        email = email.lower()
-
-        current_reservations = Reservation.objects.all()
+    def create(self, request):
+        current_reservations = self.get_queryset()
         num_reservations = sum([reservation.num_attending for reservation in current_reservations])
-        existing_reservation = current_reservations.filter(email=email)
-        selected_reservation = None
+        reservations_matching_email = current_reservations.filter(email=request.data.get('email'))
 
-        # Only create a new reservation if one does not already exist...
-        if existing_reservation.exists():
-            selected_reservation = existing_reservation[0]
+        if reservations_matching_email.exists():
+            reservation = reservations_matching_email.first()
+
         else:
             try:
-                num_attending = int(num_attending)
+                num_attending = int(request.data.get('num_attending', 1))
                 num_attending = max(1, num_attending)
                 num_attending = min(2, num_attending)
             except ValueError:
                 num_attending = 1
 
-            selected_reservation = Reservation.objects.create(
-                first_name=first_name,
-                last_name=last_name,
-                address=address,
-                email=email,
-                num_attending=num_attending
-            )
+            reservation = Reservation(**request.data)
+            reservation.num_attending = num_attending
+            reservation.save()
 
-            num_reservations += selected_reservation.num_attending
+            num_reservations += reservation.num_attending
 
         # Make sure the maximum number of reservations has not been exceeded...
         if num_reservations > MAX_NUM_RESERVATIONS:
-            selected_reservation.waitlisted = False
-            selected_reservation.save()
+            reservation.waitlisted = False
+            reservation.save()
 
         # Send email: 'You are confirmed for the event...'
         send_mail(
             'Reservation',
             message=CONFIRMATION_MESSAGE,
             from_email='rsvp@rsvpcapitalone.com',
-            recipient_list=[email],
+            recipient_list=[request.data.get('email')],
             fail_silently=True
         )
 
-        return HttpResponse(selected_reservation.to_json())
+        return Response(data=ReservationSerializer(reservation).data)
+
+
+    @method_decorator(user_is_superuser)
+    def retrieve(self, request, pk=None):
+        return super(ReservationViewSet, self).retrieve(request, pk)
+
+    def update(self, request, pk=None):
+        reservation = get_object_or_404(Reservation, pk=pk)
+        reservation.waitlisted = True
+        reservation.save()
+
+        # Send email: 'You have been added to the waitlist...'
+        send_mail(
+            'Reservation',
+            message=WAITLIST_MESSAGE,
+            from_email='rsvp@rsvpcapitalone.com',
+            recipient_list=[reservation.email],
+            fail_silently=True
+        )
+
+        return Response(data=ReservationSerializer(reservation).data)

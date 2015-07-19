@@ -83,6 +83,7 @@
     angular.module("rsvpApp", ["restangular"])
         .config(function(RestangularProvider) {
             RestangularProvider.setBaseUrl("/api/v1/");
+            RestangularProvider.setRequestSuffix("/");
             RestangularProvider.setDefaultHttpFields({
                 xsrfHeaderName: "X-CSRFToken",
                 xsrfCookieName: "csrftoken"
