@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 # Local imports...
-from ..apis import CONFIRMATION_MESSAGE, WAITLIST_MESSAGE
+from ..apis import CONFIRMATION_MESSAGE, WAIT_LIST_MESSAGE
 from ..models import Reservation
 from ..serializers import ReservationSerializer
 
@@ -96,7 +96,7 @@ class ReservationsViewTest(TestCase):
 
         mock_send_mail.assert_called_once_with(
             'Reservation',
-            message=WAITLIST_MESSAGE,
+            message=WAIT_LIST_MESSAGE,
             from_email='rsvp@rsvpcapitalone.com',
             recipient_list=[self.reservation.email],
             fail_silently=True
@@ -115,11 +115,11 @@ class ReservationsViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Reservation.objects.count(), 2)
-        self.assertIsNone(Reservation.objects.last().waitlisted)
+        self.assertIsNone(Reservation.objects.last().wait_listed)
 
     @patch('reservations.apis.MAX_NUM_RESERVATIONS')
     @patch('reservations.apis.send_mail')
-    def test_reservation_is_waitlisted_if_max_reservations_reached(
+    def test_reservation_is_wait_listed_if_max_reservations_reached(
         self,
         mock_send_mail,
         mock_max_num_reservations
@@ -137,7 +137,7 @@ class ReservationsViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Reservation.objects.count(), 2)
-        self.assertFalse(Reservation.objects.last().waitlisted)
+        self.assertFalse(Reservation.objects.last().wait_listed)
 
     @patch('reservations.apis.send_mail')
     def test_new_reservation_sends_email(self, mock_send_mail):

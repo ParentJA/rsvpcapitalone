@@ -20,7 +20,7 @@ class Config(models.Model):
             'default': 0
         }
     }, {
-        'name': 'WAITLIST_MESSAGE',
+        'name': 'WAIT_LIST_MESSAGE',
         'class': 'TextField',
         'kwargs': {
             'blank': True
@@ -43,7 +43,7 @@ class Reservation(models.Model):
     email = models.EmailField(max_length=250, unique=True)
     num_attending = models.IntegerField(verbose_name='Number attending', max_length=1)
     rsvp_date = models.DateTimeField(verbose_name='RSVP date', auto_now=True)
-    waitlisted = models.NullBooleanField(default=None)
+    wait_listed = models.NullBooleanField(default=None)
 
     def save(self, *args, **kwargs):
         # Send email to admins: 'Update on reservations...'
@@ -51,8 +51,8 @@ class Reservation(models.Model):
 
         body = '%s %s is confirmed for the event...' % (self.first_name, self.last_name)
 
-        if self.waitlisted:
-            body = '%s %s has been added to the waitlist...' % (self.first_name, self.last_name,)
+        if self.wait_listed:
+            body = '%s %s has been added to the wait list...' % (self.first_name, self.last_name,)
 
         send_mail(
             'Reservation',
@@ -72,7 +72,7 @@ class Reservation(models.Model):
             'address': self.address,
             'email': self.email,
             'num_attending': self.num_attending,
-            'waitlisted': self.waitlisted
+            'wait_listed': self.wait_listed
         })
 
     def __unicode__(self):

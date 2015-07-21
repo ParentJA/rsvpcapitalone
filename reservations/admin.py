@@ -14,6 +14,6 @@ admin.site.register(Config, ConfigAdmin)
 
 
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('rsvp_date', 'first_name', 'last_name', 'address', 'email', 'num_attending', 'waitlisted',)
+    list_display = ('rsvp_date', 'first_name', 'last_name', 'address', 'email', 'num_attending', 'wait_listed',)
 
 admin.site.register(Reservation, ReservationAdmin)

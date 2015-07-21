@@ -37,9 +37,9 @@
             $scope.data.reservationId = data.id;
             $scope.data.reservationEmail = data.email;
 
-            //Reservations are full, launch waitlist modal...
-            if (data.waitlisted == false) {
-                $("#waitlist-modal").modal("show");
+            //Reservations are full, launch wait list modal...
+            if (data.wait_listed == false) {
+                $("#wait_list_modal").modal("show");
             }
 
             //Reservation was successful or user already registered...
@@ -57,30 +57,30 @@
         return {
             restrict: "E",
             replace: true,
-            templateUrl: "/views/thank-you-modal.html"
+            templateUrl: "/views/thank_you_modal.html"
         };
     };
 
-    var waitlistModalCtrl = function ($scope, Restangular) {
-        $scope.onWaitlistButtonClick = function onWaitlistButtonClick() {
+    var WaitListModalCtrl = function ($scope, Restangular) {
+        $scope.onWaitListButtonClick = function onWaitListButtonClick() {
             Restangular.one("reservations", $scope.data.reservationId).post({
                 email: $scope.data.reservationEmail
-            }).then($scope.onWaitlistSuccess, $scope.onWaitlistError);
+            }).then($scope.onWaitListSuccess, $scope.onWaitListError);
         };
 
-        $scope.onWaitlistSuccess = function onWaitlistSuccess(data) {};
+        $scope.onWaitListSuccess = function onWaitListSuccess(data) {};
 
-        $scope.onWaitlistError = function onWaitlistError(data) {};
+        $scope.onWaitListError = function onWaitListError(data) {};
     };
 
-    waitlistModalCtrl.$inject = ["$scope", "Restangular"];
+    WaitListModalCtrl.$inject = ["$scope", "Restangular"];
 
-    var waitlistModal = function waitlistModal() {
+    var waitListModal = function waitListModal() {
         return {
             restrict: "E",
             replace: true,
-            controller: waitlistModalCtrl,
-            templateUrl: "/views/waitlist-modal.html"
+            controller: WaitListModalCtrl,
+            templateUrl: "/views/wait_list_modal.html"
         };
     };
 
@@ -95,6 +95,6 @@
         })
         .controller("RsvpController", RsvpController)
         .directive("thankYouModal", thankYouModal)
-        .directive("waitlistModal", waitlistModal);
+        .directive("waitListModal", waitListModal);
 
 }());

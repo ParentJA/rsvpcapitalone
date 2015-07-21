@@ -21,6 +21,6 @@ urlpatterns += format_suffix_patterns(patterns('',
 ))
 
 urlpatterns += patterns('',
-    url(r'^views/thank-you-modal.html$', TemplateView.as_view(template_name='views/thank-you-modal.html')),
-    url(r'^views/waitlist-modal.html$', TemplateView.as_view(template_name='views/waitlist-modal.html')),
+    url(r'^views/thank_you_modal.html$', TemplateView.as_view(template_name='views/thank_you_modal.html')),
+    url(r'^views/wait_list_modal.html$', TemplateView.as_view(template_name='views/wait_list_modal.html')),
 )

@@ -22,7 +22,7 @@ from .utils import get_param
 user_is_superuser = user_passes_test(lambda u: u.is_superuser, login_url='/admin/')
 
 MAX_NUM_RESERVATIONS = get_param('MAX_NUM_RESERVATIONS', 66)
-WAITLIST_MESSAGE = get_param('WAITLIST_MESSAGE', '[WAITLIST_MESSAGE]')
+WAIT_LIST_MESSAGE = get_param('WAIT_LIST_MESSAGE', '[WAIT_LIST_MESSAGE]')
 CONFIRMATION_MESSAGE = get_param('CONFIRMATION_MESSAGE', '[CONFIRMATION_MESSAGE]')
 
 
@@ -54,7 +54,7 @@ class ReservationViewSet(ModelViewSet):
 
         # Make sure the maximum number of reservations has not been exceeded...
         if num_reservations > int(MAX_NUM_RESERVATIONS):
-            reservation.waitlisted = False
+            reservation.wait_listed = False
             reservation.save()
 
         # Send email: 'You are confirmed for the event...'
@@ -75,13 +75,13 @@ class ReservationViewSet(ModelViewSet):
 
     def update(self, request, pk=None):
         reservation = get_object_or_404(Reservation, pk=pk)
-        reservation.waitlisted = True
+        reservation.wait_listed = True
         reservation.save()
 
-        # Send email: 'You have been added to the waitlist...'
+        # Send email: 'You have been added to the wait list...'
         send_mail(
             'Reservation',
-            message=WAITLIST_MESSAGE,
+            message=WAIT_LIST_MESSAGE,
             from_email='rsvp@rsvpcapitalone.com',
             recipient_list=[reservation.email],
             fail_silently=True
