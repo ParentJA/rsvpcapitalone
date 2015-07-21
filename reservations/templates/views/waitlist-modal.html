@@ -1,19 +1,11 @@
 <div id="waitlist-modal" class="modal fade">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-body">
-                <img class="logo"
-                     src="{{ STATIC_URL }}www/app/res/logo-capital-black.png"
-                     width="193"
-                     height="49"
-                     style="margin-bottom: 40px;">
-                <p class="uppercase" style="font-size: 18px; line-height: 36px;">
-                    Thank you but we have already<br>
-                    reached capacity for this event.<br>
-                    Please click the box below.
+                <p>
+                    Thank you but we have already reached capacity for this event. Please click the box below.
                 </p>
-                <div class="bar"></div>
-                <button class="btn btn-capital-modal" type="button"
+                <button class="btn btn-primary btn-block" type="button"
                         ng-click="onWaitlistButtonClick()">Please add me to the wait list</button>
             </div>
         </div>
