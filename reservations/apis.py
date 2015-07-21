@@ -1,5 +1,8 @@
 __author__ = 'jason.a.parent@gmail.com (Jason Parent)'
 
+# Standard-library imports...
+import json
+
 # Third-party library imports...
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -47,7 +50,7 @@ class ReservationViewSet(ModelViewSet):
                 num_reservations += reservation.num_attending
 
             else:
-                return Response(data=reservation_form)
+                return Response(data=json.dumps(reservation_form.errors), status_code=400)
 
         # Make sure the maximum number of reservations has not been exceeded...
         if num_reservations > int(MAX_NUM_RESERVATIONS):
