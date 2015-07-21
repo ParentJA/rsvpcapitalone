@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html ng-app="rsvpApp">
 
@@ -7,8 +7,7 @@
     <title>RSVP Capital One</title>
     <meta name="viewport"
           content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="{{ STATIC_URL }}www/bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}www/app/src/app.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}www/bower_components/bootswatch/journal/bootstrap.min.css">
 </head>
 
 <body ng-controller="RsvpController">
@@ -16,96 +15,67 @@
     <waitlist-modal></waitlist-modal>
     <div class="container">
         <div class="row">
-            <div id="header" class="col-lg-12 col-md-12">
-                <p class="text-center">
-                    <span>We're the bank next door</span><br>
-                    <span class="byline uppercase">but that doesn't mean we're ordinary</span>
-                </p>
+            <div class="col-md-12">
+                <h1>We're the bank next door, but that doesn't mean we're ordinary</h1>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-5 col-md-5 text-right" style="padding-top: 70px; padding-right: 28px;">
-                <p>
-                    Join us & Chef Harold Deiterle<br>
-                    for a private tasting and<br>
-                    cooking demonstration.
-                </p>
-                <p class="date-lg" style="padding: 30px 0;">
+            <div class="col-md-6">
+                <p class="lead">
+                    Join us &amp; Chef Harold Deiterle for a private tasting and cooking demonstration.
                     July 24<sup>th</sup>, 7-9pm
                 </p>
-                <p>
-                    Capital One Bank<br>
-                    Columbus & 97th Branch<br>
+                <address>
+                    <strong>Capital One Bank</strong><br>
+                    Columbus &amp; 97th Branch<br>
                     750 Columbus Avenue<br>
                     New York, NY 10025
-                </p>
-                <p class="date-md" style="padding-top: 70px;">
-                    Space is limited.<br>
-                    Please RSVP by July 18<sup>th</sup>.
-                </p>
-                <p style="padding-top: 45px;">
-                    <img src="{{ STATIC_URL }}www/app/res/logo-capital.png" width="242" height="61">
+                </address>
+                <p class="lead">
+                    Space is limited. Please RSVP by July 18<sup>th</sup>.
                 </p>
             </div>
-            <div class="col-lg-7 col-md-7 text-left">
-                <form class="form-horizontal" novalidate ng-submit="submit()">
-                    <p class="form-heading text-center">
-                        <span class="small-print uppercase">
-                            Enter your<br>
-                            information to<br>
-                        </span>
-                        <span class="rsvp">RSVP</span>
-                    </p>
-                    <div class="alert alert-danger" ng-show="data.isFormIncomplete">
-                        Fill in all of the fields below.
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Enter your information to RSVP</h4>
                     </div>
-                    <div class="alert alert-danger" ng-show="data.isFormInvalid" ng-bind="data.errorMessage"></div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="first-name">First name:</label>
-                        <div class="col-md-8">
-                            <input id="first-name" class="form-control" type="text"
-                                   ng-model="data.firstName" required>
-                        </div>
+                    <div class="panel-body">
+                        <form name="reservation_form" novalidate ng-submit="submit()">
+                            <div class="alert alert-danger" ng-if="data.isFormIncomplete">
+                                Fill in all of the fields below.
+                            </div>
+                            <div class="alert alert-danger" ng-if="data.isFormInvalid">{{ data.errorMessage }}</div>
+                            <div class="form-group">
+                                <label class="control-label">First name:</label>
+                                <input class="form-control" type="text" name="first_name" ng-model="data.first_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Last name:</label>
+                                <input class="form-control" type="text" name="last_name" ng-model="data.last_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Address:</label>
+                                <input class="form-control" type="text" name="address" ng-model="data.address" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Email:</label>
+                                <input class="form-control" type="email" name="email" ng-model="data.email" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Number attending:</label>
+                                <input class="form-control" type="number" name="num_attending" min="1" max="2"
+                                       value="1" ng-model="data.num_attending" required>
+                            </div>
+                            <button class="btn btn-primary btn-block" type="submit" ng-disabled="reservation_form.$invalid">Submit</button>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="last-name">Last name:</label>
-                        <div class="col-md-8">
-                            <input id="last-name" class="form-control" type="text"
-                                   ng-model="data.lastName" required>
-                        </div>
+                    <div class="panel-footer">
+                        No purchase necessary. Products and services are offered by Capital One, N.A.<br>
+                        1680 Capital One Drive, McLean, VA 22102. &reg; 2014 Capital One.<br>
+                        All rights reserved.
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" for="address">Address:</label>
-                        <div class="col-md-9">
-                            <input id="address" class="form-control" type="text"
-                                   ng-model="data.address" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label" for="first-name">Email:</label>
-                        <div class="col-md-10">
-                            <input id="email" class="form-control" type="email"
-                                   ng-model="data.email" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-6 control-label" for="number-attending">Number attending:</label>
-                        <div class="col-md-6">
-                            <select id="number-attending" class="form-control"
-                                    ng-model="data.numAttending" required>
-                                <option>1</option>
-                                <option>2</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="btn btn-capital center-block" type="submit">Submit</button>
-                </form>
-                <p class="small-print terms-of-service">
-                    No purchase necessary. Products and services are offered by Capital One, N.A.<br>
-                    1680 Capital One Drive, McLean, VA 22102. &reg; 2014 Capital One.<br>
-                    All rights reserved.
-                    <img src="{{ STATIC_URL }}www/app/res/logo-fdic.png" width="30" height="16">
-                </p>
+                </div>
             </div>
         </div>
     </div>

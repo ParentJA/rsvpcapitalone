@@ -1,15 +1,19 @@
 (function () {
 
     var RsvpController = function RsvpController($scope, $log, Restangular) {
-        $scope.data = {};
+        $scope.data = {
+            num_attending: 1,
+            isFormIncomplete: false,
+            isFormInvalid: false
+        };
 
         $scope.submit = function submit() {
             var reservationData = {
-                first_name: $scope.data.firstName,
-                last_name: $scope.data.lastName,
+                first_name: $scope.data.first_name,
+                last_name: $scope.data.last_name,
                 address: $scope.data.address,
                 email: $scope.data.email,
-                num_attending: $scope.data.numAttending
+                num_attending: $scope.data.num_attending
             };
 
             var isComplete = true;
