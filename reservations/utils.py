@@ -1,4 +1,4 @@
-__author__ = 'parentj@eab.com (Jason Parent)'
+__author__ = 'jason.a.parent@gmail.com (Jason Parent)'
 
 # Django imports...
 from django.conf import settings

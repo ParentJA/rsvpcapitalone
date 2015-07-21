@@ -1,4 +1,4 @@
-__author__ = 'parentj@eab.com (Jason Parent)'
+__author__ = 'jason.a.parent@gmail.com (Jason Parent)'
 
 # Third-party library imports...
 from rest_framework.generics import get_object_or_404

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "homepage": "https://github.com/ParentJA/rsvpcapitalone",
   "authors": [
-    "Jason Parent <ParentJ@advisory.com>"
+    "Jason Parent <jason.a.parent@gmail.com>"
   ],
   "description": "An RSVP system.",
   "moduleType": [
