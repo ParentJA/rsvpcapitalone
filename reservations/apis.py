@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 
 # Local imports...
+from .forms import ReservationForm
 from .models import Reservation
 from .serializers import ReservationSerializer
 from .utils import get_param
@@ -39,18 +40,14 @@ class ReservationViewSet(ModelViewSet):
             reservation = reservations_matching_email.first()
 
         else:
-            try:
-                num_attending = int(request.data.get('num_attending', 1))
-                num_attending = max(1, num_attending)
-                num_attending = min(2, num_attending)
-            except ValueError:
-                num_attending = 1
+            reservation_form = ReservationForm(request.data)
 
-            reservation = Reservation(**request.data)
-            reservation.num_attending = num_attending
-            reservation.save()
+            if reservation_form.is_valid():
+                reservation = reservation_form.save()
+                num_reservations += reservation.num_attending
 
-            num_reservations += reservation.num_attending
+            else:
+                return Response(data=reservation_form)
 
         # Make sure the maximum number of reservations has not been exceeded...
         if num_reservations > int(MAX_NUM_RESERVATIONS):
