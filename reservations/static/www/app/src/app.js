@@ -1,100 +1,105 @@
-(function () {
+(function (window, angular, undefined) {
 
-    var RsvpController = function RsvpController($scope, $log, Restangular) {
-        $scope.data = {
-            num_attending: 1,
-            isFormIncomplete: false,
-            isFormInvalid: false
-        };
+  "use strict";
 
-        $scope.submit = function submit() {
-            var reservationData = {
-                first_name: $scope.data.first_name,
-                last_name: $scope.data.last_name,
-                address: $scope.data.address,
-                email: $scope.data.email,
-                num_attending: $scope.data.num_attending
-            };
-
-            var isComplete = true;
-
-            _.forEach(reservationData, function (value) {
-                isComplete = isComplete && !_.isUndefined(value);
-            });
-
-            if (isComplete) {
-                $scope.data.isFormIncomplete = false;
-
-                Restangular.all("reservations").post(reservationData)
-                    .then($scope.onReservationSuccess, $scope.onReservationError);
-            }
-            else {
-                $scope.data.isFormIncomplete = true;
-            }
-        };
-
-        $scope.onReservationSuccess = function onReservationSuccess(data) {
-            $scope.data.reservationId = data.id;
-            $scope.data.reservationEmail = data.email;
-
-            //Reservations are full, launch wait list modal...
-            if (data.wait_listed == false) {
-                $("#wait_list_modal").modal("show");
-            }
-
-            //Reservation was successful or user already registered...
-            else {
-                $("#thank-you-modal").modal("show");
-            }
-        };
-
-        $scope.onReservationError = function onReservationError(data) {};
+  var RsvpController = function RsvpController($scope, $log, Restangular) {
+    $scope.data = {
+      num_attending: 1,
+      isFormIncomplete: false,
+      isFormInvalid: false
     };
 
-    RsvpController.$inject = ["$scope", "$log", "Restangular"];
+    $scope.submit = function submit() {
+      var reservationData = {
+        first_name: $scope.data.first_name,
+        last_name: $scope.data.last_name,
+        address: $scope.data.address,
+        email: $scope.data.email,
+        num_attending: $scope.data.num_attending
+      };
 
-    var thankYouModal = function thankYouModal() {
-        return {
-            restrict: "E",
-            replace: true,
-            templateUrl: "/views/thank_you_modal.html"
-        };
+      var isComplete = true;
+
+      _.forEach(reservationData, function (value) {
+        isComplete = isComplete && !_.isUndefined(value);
+      });
+
+      if (isComplete) {
+        $scope.data.isFormIncomplete = false;
+
+        Restangular.all("reservations").post(reservationData)
+          .then($scope.onReservationSuccess, $scope.onReservationError);
+      }
+      else {
+        $scope.data.isFormIncomplete = true;
+      }
     };
 
-    var WaitListModalCtrl = function ($scope, Restangular) {
-        $scope.onWaitListButtonClick = function onWaitListButtonClick() {
-            Restangular.one("reservations", $scope.data.reservationId).post({
-                email: $scope.data.reservationEmail
-            }).then($scope.onWaitListSuccess, $scope.onWaitListError);
-        };
+    $scope.onReservationSuccess = function onReservationSuccess(data) {
+      $scope.data.reservationId = data.id;
+      $scope.data.reservationEmail = data.email;
 
-        $scope.onWaitListSuccess = function onWaitListSuccess(data) {};
+      //Reservations are full, launch wait list modal...
+      if (data.wait_listed == false) {
+        $("#wait_list_modal").modal("show");
+      }
 
-        $scope.onWaitListError = function onWaitListError(data) {};
+      //Reservation was successful or user already registered...
+      else {
+        $("#thank-you-modal").modal("show");
+      }
     };
 
-    WaitListModalCtrl.$inject = ["$scope", "Restangular"];
+    $scope.onReservationError = function onReservationError(data) {
+    };
+  };
 
-    var waitListModal = function waitListModal() {
-        return {
-            restrict: "E",
-            replace: true,
-            controller: WaitListModalCtrl,
-            templateUrl: "/views/wait_list_modal.html"
-        };
+  RsvpController.$inject = ["$scope", "$log", "Restangular"];
+
+  var thankYouModal = function thankYouModal() {
+    return {
+      restrict: "E",
+      replace: true,
+      templateUrl: "/views/thank_you_modal.html"
+    };
+  };
+
+  var WaitListModalCtrl = function ($scope, Restangular) {
+    $scope.onWaitListButtonClick = function onWaitListButtonClick() {
+      Restangular.one("reservations", $scope.data.reservationId).post({
+        email: $scope.data.reservationEmail
+      }).then($scope.onWaitListSuccess, $scope.onWaitListError);
     };
 
-    angular.module("rsvpApp", ["restangular"])
-        .config(function(RestangularProvider) {
-            RestangularProvider.setBaseUrl("/api/v1/");
-            RestangularProvider.setRequestSuffix("/");
-            RestangularProvider.setDefaultHttpFields({
-                xsrfHeaderName: "X-CSRFToken",
-                xsrfCookieName: "csrftoken"
-            });
-        })
-        .controller("RsvpController", RsvpController)
-        .directive("thankYouModal", thankYouModal)
-        .directive("waitListModal", waitListModal);
+    $scope.onWaitListSuccess = function onWaitListSuccess(data) {
+    };
 
-}());
+    $scope.onWaitListError = function onWaitListError(data) {
+    };
+  };
+
+  WaitListModalCtrl.$inject = ["$scope", "Restangular"];
+
+  var waitListModal = function waitListModal() {
+    return {
+      restrict: "E",
+      replace: true,
+      controller: WaitListModalCtrl,
+      templateUrl: "/views/wait_list_modal.html"
+    };
+  };
+
+  angular.module("rsvpApp", ["restangular"])
+    .config(function (RestangularProvider) {
+      RestangularProvider.setBaseUrl("/api/v1/");
+      RestangularProvider.setRequestSuffix("/");
+      RestangularProvider.setDefaultHttpFields({
+        xsrfHeaderName: "X-CSRFToken",
+        xsrfCookieName: "csrftoken"
+      });
+    })
+    .controller("RsvpController", RsvpController)
+    .directive("thankYouModal", thankYouModal)
+    .directive("waitListModal", waitListModal);
+
+})(window, window.angular);

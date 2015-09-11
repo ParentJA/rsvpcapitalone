@@ -5,7 +5,7 @@ import json
 
 # Third-party imports...
 from mock import patch
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APIRequestFactory
 
 # Django imports...
 from django.contrib.auth import get_user_model
@@ -24,6 +24,7 @@ class ReservationsViewTest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.factory = APIRequestFactory()
 
         # Create a superuser...
         self.superuser = User.objects.create_superuser(
